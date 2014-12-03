@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lomax browser</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <table id='songs' border='1' class="tablesorter" style="table-layout:fixed">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Artists</th>
+          <th>Genres</th>
+          <th>Recording Id</th>
+          <th>Session</th>
+        </tr>
+      </thead>
+      <tbody id='songsbody'></tbody>
+    </table>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="js/underscore-min.js" type="text/javascript"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script src="js/jquery.tablesorter.js"></script>
+    <script type="text/javascript">
+    $(document).ready (function(){
+        $.getJSON("data.json", function(data) {
+            var table = $("#songsbody")
+            $.each(data.songs, function(k, v) {
+                var row = $(document.createElement("tr"));
+                row.append("<td><a href='http://research.culturalequity.org/rc-b2/get-audio-detailed-recording.do?recordingId=" + v.rid + "'>" + v.title + "</a></td>");
+                var artists = _.map(v.aids, function(aid) { return data.artistmap[aid]; }).join("; ");
+                var genres = _.map(v.gids, function(gid) { return data.genremap[gid]; }).join("; ");
+                row.append("<td>" + artists + "</td>");
+                row.append("<td>" + genres + "</td>");
+                row.append("<td><a href='http://c0383352.cdn.cloudfiles.rackspacecloud.com/audio/" + v.tid + ".mp3'>" + v.tid + "</a></td>");
+                row.append("<td>" + v.session + "</td>");
+                table.append(row)
+            });
+            $("#songs").tablesorter();
+        })
+    });
+    </script>
+  </body>
+</html>
