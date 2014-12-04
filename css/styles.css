@@ -1,11 +1,2 @@
-table {
-    border: 1px solid black;
-    table-layout: fixed;
-    width: 60%;
-}
-
-th, td {
-    border: 1px solid black;
-    overflow: hidden;
-    width: 20%;
-}
+body { padding-top: 70px; }
+#nav-seach-box { width: 500px; }

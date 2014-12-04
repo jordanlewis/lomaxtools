@@ -9,12 +9,21 @@
     <link rel="stylesheet" href="css/styles.css">
   </head>
   <body>
-    <form role="search">
-        <div class="form-group">
-            <input type="text" class="form-control" placeholder="Search by title, artist, genre or session..."></input>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <span class="navbar-brand">Lomax Recordings Browser</span>
         </div>
-    </form>
-    <table id='songs' class="table" class="tablesorter">
+        <div>
+          <form class="navbar-form" role="search">
+            <div class="form-group">
+              <input id="nav-search-bod" type="text" class="form-control" placeholder="Search by title, artist, genre or session..."></input>
+            </div>
+          </form>
+        </div>
+      </div>
+    </nav>
+    <table id='songs' class="table table-bordered">
       <thead>
         <tr>
           <th>Title</th>
