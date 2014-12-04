@@ -8,13 +8,13 @@ requirejs.config({
         "jquery.bootstrap": {
             deps: ["jquery"]
         },
-        "audio-min": {
+        "audio.min": {
             exports: "audiojs"
         }
     }
 });
 
-require(["jquery", "underscore", "audio-min", "lunr.min", "jquery.bootstrap"
+require(["jquery", "underscore", "audio.min", "lunr.min", "jquery.bootstrap"
 ], function($, _, audiojs, lunr) {
   audiojs.events.ready(function() { var as = audiojs.createAll(); });
   var index = lunr(function() {
