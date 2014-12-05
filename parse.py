@@ -13,7 +13,7 @@ def parse_tags(links, tagmap):
     for a in links:
         id = int(tag_link_regex.match(a["href"]).group(1))
         tagids.append(id)
-        name = a.string
+        name = a.string.strip()
         if id in tagmap:
             if name != tagmap[id]:
                 print "tag conflict: %s %s %s" % (id, tagmap[id], name)
