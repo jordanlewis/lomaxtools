@@ -18,22 +18,32 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
 ], function($, _, audiojs, lunr, unparsed_data, unparsed_index) {
   var data = JSON.parse(unparsed_data);
   var index = lunr(function() {
-      this.field("title");
-      this.field("session");
-      this.field("artists");
-      this.field("genres");
-      this.ref("rid");
+    this.field("title");
+    this.field("session");
+    this.field("artists");
+    this.field("genres");
+    this.ref("rid");
   });
-  var as = audiojs.createAll();
+  var as = audiojs.createAll({
+    trackEnded: function() {
+      var next = $("#songsbody tr.playing").next();
+      if (!next.length) next = $("#songsbody tr").first();
+      next.addClass("playing").prev().removeClass("playing");
+      a.load($("a.songlink", next).attr("data-src"));
+      a.play();
+    }
+  });
   var a = as[0];
   console.time("populate index")
   index = lunr.Index.load(JSON.parse(unparsed_index))
-  /*
+  console.timeEnd("populate index")
+  console.time("inflate artists/genres")
   $.each(data.songs, function(k, v) {
     v.artists = _.map(v.aids, function(aid) { return data.artistmap[aid]; }).join("; ");
     v.genres = _.map(v.gids, function(gid) { return data.genremap[gid]; }).join("; ");
-    index.add(v);
+    //index.add(v)
   });
+  /*
   var idxstr = JSON.stringify(index.toJSON())
 
   var blob = new Blob([idxstr], {type: 'text/json'}),
@@ -46,15 +56,15 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
   e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
   a.dispatchEvent(e)
   */
-  console.timeEnd("populate index")
+  console.timeEnd("inflate artists/genres")
 
-  var render = function(results) {
+  var render = function(ids) {
       console.time("render")
       $("#songsbody")
           .empty()
-          .append($.map(results, function(result) {
+          .append($.map(ids, function(id) {
               var row = $(document.createElement("tr"));
-              var v = data.songs[result.ref];
+              var v = data.songs[id];
               row.append("<td><a href='http://research.culturalequity.org/rc-b2/get-audio-detailed-recording.do?recordingId=" + v.rid + "'>" + v.title + "</a></td>");
               row.append("<td>" + v.artists + "</td>");
               row.append("<td>" + v.genres + "</td>");
@@ -63,8 +73,8 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
               return row;
           }));
       $(".songlink").click(function(e) {
-          console.log("hodor");
           e.preventDefault();
+          $(this).parent().parent().addClass("playing").siblings().removeClass("playing");
           a.load($(this).attr("data-src"));
           a.play();
       });
@@ -83,6 +93,7 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
   $("input").bind("keyup", debounce(function() {
       var query = $(this).val();
       if (query.length < 2) return
-      render(index.search(query));
+      render(_.map(index.search(query), function (result) { return result.ref }));
   }));
+  //render(_.keys(data.songs))
 });
