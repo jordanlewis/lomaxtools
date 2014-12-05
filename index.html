@@ -14,25 +14,42 @@
         <div class="navbar-header">
           <span class="navbar-brand">Lomax Recordings Browser</span>
         </div>
-        <div class="navbar-form" role="search">
+        <div class="navbar-form navbar-left" role="search">
           <div class="form-group">
             <input id="nav-search-box" type="search" class="form-control" placeholder="Search by title, artist, genre or session..."></input>
           </div>
         </div>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Sessions<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#">Action</a></li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </nav>
-    <table id='songs' class="table table-bordered">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Artists</th>
-          <th>Genres</th>
-          <th>Recording Id</th>
-          <th>Session</th>
-        </tr>
-      </thead>
-      <tbody id='songsbody'></tbody>
-    </table>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-8">
+          <table id='songs' class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Artists</th>
+                <th>Genres</th>
+                <th>Recording Id</th>
+                <th>Session</th>
+              </tr>
+            </thead>
+            <tbody id='songsbody'></tbody>
+          </table>
+        </div>
+        <div class="col-md-4">
+          <audio></audio>
+        </div>
+      </div>
+    </div>
     <script data-main="js/app" src="js/require.js"></script>
   </body>
 </html>
