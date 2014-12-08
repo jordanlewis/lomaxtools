@@ -39,21 +39,38 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
   console.timeEnd("populate index")
   console.time("inflate artists/genres")
   var sessionmap = {}
+  var artistmap = {}
+  var genremap = {}
+  var addToMap = function(map, k, v) {
+    if (! _.has(map, k)) map[k] = [];
+    map[k].push(v);
+  }
+  var createIndexMenu = function(indexmap, indexname) {
+    var indexList = $("#" + indexname + "-list");
+    _.each(_.keys(indexmap).sort(), function(elt, idx, list) {
+        indexList.append("<li><a href='#' class='" + indexname + "link'>" + elt + "</a></li>");
+    });
+    $("." + indexname + "link").click(function(e) {
+      e.preventDefault();
+      render(indexmap[$(this).text()]);
+    });
+  }
   _.each(data.songs, function(v, k) {
     v.artists = _.map(v.aids, function(aid) { return data.artistmap[aid]; }).join("; ");
     v.genres = _.map(v.gids, function(gid) { return data.genremap[gid]; }).join("; ");
-    if (! _.has(sessionmap, v.session)) sessionmap[v.session] = [];
-    sessionmap[v.session].push(v.rid);
+    _.each(v.aids, function(elt, idx, list) {
+        addToMap(artistmap, data.artistmap[elt], v.rid);
+    });
+    _.each(v.gids, function(elt, idx, list) {
+        addToMap(genremap, data.genremap[elt], v.rid);
+    });
+    addToMap(sessionmap, v.session, v.rid);
     //index.add(v)
   });
-  var sessionList = $("#session-list");
-  _.each(_.keys(sessionmap).sort(), function(elt, idx, list) {
-      sessionList.append("<li><a href='#' class='sessionlink'>" + elt + "</a></li>");
-  });
-  $(".sessionlink").click(function(e) {
-    e.preventDefault();
-    render(sessionmap[$(this).text()]);
-  });
+  createIndexMenu(sessionmap, "session");
+  createIndexMenu(artistmap, "artist");
+  createIndexMenu(genremap, "genre");
+
   /*
   var idxstr = JSON.stringify(index.toJSON())
 
