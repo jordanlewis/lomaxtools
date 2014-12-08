@@ -38,10 +38,21 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
   index = lunr.Index.load(JSON.parse(unparsed_index))
   console.timeEnd("populate index")
   console.time("inflate artists/genres")
-  $.each(data.songs, function(k, v) {
+  var sessionmap = {}
+  _.each(data.songs, function(v, k) {
     v.artists = _.map(v.aids, function(aid) { return data.artistmap[aid]; }).join("; ");
     v.genres = _.map(v.gids, function(gid) { return data.genremap[gid]; }).join("; ");
+    if (! _.has(sessionmap, v.session)) sessionmap[v.session] = [];
+    sessionmap[v.session].push(v.rid);
     //index.add(v)
+  });
+  var sessionList = $("#session-list");
+  _.each(_.keys(sessionmap).sort(), function(elt, idx, list) {
+      sessionList.append("<li><a href='#' class='sessionlink'>" + elt + "</a></li>");
+  });
+  $(".sessionlink").click(function(e) {
+    e.preventDefault();
+    render(sessionmap[$(this).text()]);
   });
   /*
   var idxstr = JSON.stringify(index.toJSON())
@@ -81,7 +92,7 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
       console.timeEnd("render");
   }
   var debounce = function (fn) {
-      var timeout
+      var timeout;
       return function() {
           var args = Array.prototype.slice.call(arguments), ctx = this
           clearTimeout(timeout)

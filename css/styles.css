@@ -1,2 +1,8 @@
 body { padding-top: 70px; }
 #nav-search-box { width: 500px; }
+
+.scrollable-menu {
+    height: auto;
+    max-height: 400px;
+    overflow-x: hidden;
+}
