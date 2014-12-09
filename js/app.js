@@ -56,8 +56,8 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
     });
   }
   _.each(data.songs, function(v, k) {
-    v.artists = _.map(v.aids, function(aid) { return data.artistmap[aid]; }).join("; ");
-    v.genres = _.map(v.gids, function(gid) { return data.genremap[gid]; }).join("; ");
+    v.artists = _.map(v.aids, function(aid) { return "<a href='#' class='artist-inline-link'>" + data.artistmap[aid] + "</a>"; }).join("; ");
+    v.genres = _.map(v.gids, function(gid) { return "<a href='#' class='genre-inline-link'>" + data.genremap[gid] + "</a>"; }).join("; ");
     _.each(v.aids, function(elt, idx, list) {
         addToMap(artistmap, data.artistmap[elt], v.rid);
     });
@@ -97,7 +97,7 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
               row.append("<td>" + v.artists + "</td>");
               row.append("<td>" + v.genres + "</td>");
               row.append("<td><a class='songlink' href='#' data-src='http://c0383352.cdn.cloudfiles.rackspacecloud.com/audio/" + v.tid + ".mp3'>" + v.tid + "</a></td>");
-              row.append("<td>" + v.session + "</td>");
+              row.append("<td><a class='session-inline-link' href='#'>" + v.session + "</a></td>");
               return row;
           }));
       $(".songlink").click(function(e) {
@@ -106,6 +106,9 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
           a.load($(this).attr("data-src"));
           a.play();
       });
+      $(".artist-inline-link").click(function(e) { render(artistmap[$(this).text()]); });
+      $(".genre-inline-link").click(function(e) { render(genremap[$(this).text()]); });
+      $(".session-inline-link").click(function(e) { render(sessionmap[$(this).text()]); });
       console.timeEnd("render");
   }
   var debounce = function (fn) {
