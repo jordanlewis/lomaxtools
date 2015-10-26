@@ -14,8 +14,8 @@ requirejs.config({
     }
 });
 
-require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "text!../index.json", "jquery.bootstrap"
-], function($, _, audiojs, lunr, unparsed_data, unparsed_index) {
+require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "text!../data.json", "text!../index.json", "jquery.bootstrap"
+], function($, _, audiojs, waversurfer, lunr, unparsed_data, unparsed_index) {
   var data = JSON.parse(unparsed_data);
   var index = lunr(function() {
     this.field("title");
@@ -24,6 +24,7 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
     this.field("genres");
     this.ref("rid");
   });
+  /*
   var as = audiojs.createAll({
     trackEnded: function() {
       var next = $("#songsbody tr.playing").next();
@@ -33,7 +34,16 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
       a.play();
     }
   });
-  var a = as[0];
+  */
+  var player = WaveSurfer.create({container: "#wavesurfer"});
+  player.on("ready", function() { player.play(); });
+  player.on("finish", function() { 
+      var next = $("#songsbody tr.playing").next();
+      if (!next.length) next = $("#songsbody tr").first();
+      next.addClass("playing").prev().removeClass("playing");
+      player.load("https://crossorigin.me/" + $("a.songlink", next).attr("data-src"));
+  });
+  //var a = as[0];
   console.time("populate index")
   index = lunr.Index.load(JSON.parse(unparsed_index))
   console.timeEnd("populate index")
@@ -103,8 +113,7 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
       $(".songlink").click(function(e) {
           e.preventDefault();
           $(this).parent().parent().addClass("playing").siblings().removeClass("playing");
-          a.load($(this).attr("data-src"));
-          a.play();
+          player.load("https://crossorigin.me/" + $(this).attr("data-src"));
       });
       $(".artist-inline-link").click(function(e) { render(artistmap[$(this).text()]); });
       $(".genre-inline-link").click(function(e) { render(genremap[$(this).text()]); });
@@ -118,12 +127,13 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
           clearTimeout(timeout)
           timeout = setTimeout(function () {
               fn.apply(ctx, args)
-          }, 100);
+          }, 200);
       }
   }
   $("input").bind("keyup", debounce(function() {
       var query = $(this).val();
       if (query.length < 2) return
+      history.pushState({}, "", "#" + query);
       render(_.map(index.search(query), function (result) { return result.ref }));
   }));
   //render(_.keys(data.songs))

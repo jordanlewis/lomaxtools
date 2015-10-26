@@ -6,3 +6,7 @@ body { padding-top: 70px; }
     max-height: 400px;
     overflow-x: hidden;
 }
+
+tr.playing {
+    background-color: #98FB98;
+}
