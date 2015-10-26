@@ -93,7 +93,7 @@ require(["jquery", "underscore", "audio.min", "lunr.min", "text!../data.json", "
           .append($.map(ids, function(id) {
               var row = $(document.createElement("tr"));
               var v = data.songs[id];
-              row.append("<td><a href='http://research.culturalequity.org/rc-b2/get-audio-detailed-recording.do?recordingId=" + v.rid + "'>" + v.title + "</a></td>");
+              row.append("<td><a href='http://research.culturalequity.org/rc-b2/get-audio-detailed-recording.do?recordingId=" + v.rid + "' target='_blank'>" + v.title + "</a></td>");
               row.append("<td>" + v.artists + "</td>");
               row.append("<td>" + v.genres + "</td>");
               row.append("<td><a class='songlink' href='#' data-src='http://c0383352.cdn.cloudfiles.rackspacecloud.com/audio/" + v.tid + ".mp3'>" + v.tid + "</a></td>");
