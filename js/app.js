@@ -35,7 +35,7 @@ require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "tex
     }
   });
   */
-  var player = WaveSurfer.create({container: "#wavesurfer"});
+  var player = WaveSurfer.create({container: "#wavesurfer", height: 46});
   player.on("ready", function() { player.play(); });
   player.on("finish", function() { 
       var next = $("#songsbody tr.playing").next();
@@ -66,8 +66,8 @@ require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "tex
     });
   }
   _.each(data.songs, function(v, k) {
-    v.artists = _.map(v.aids, function(aid) { return "<a href='#' class='artist-inline-link'>" + data.artistmap[aid] + "</a>"; }).join("; ");
-    v.genres = _.map(v.gids, function(gid) { return "<a href='#' class='genre-inline-link'>" + data.genremap[gid] + "</a>"; }).join("; ");
+    v.artists = _.map(v.aids, function(aid) { return "<a href='#' aid='" + aid + "' class='artist-inline-link'>" + data.artistmap[aid] + "</a>"; }).join("; ");
+    v.genres = _.map(v.gids, function(gid) { return "<a href='#' gid='" + gid + "' class='genre-inline-link'>" + data.genremap[gid] + "</a>"; }).join("; ");
     _.each(v.aids, function(elt, idx, list) {
         addToMap(artistmap, data.artistmap[elt], v.rid);
     });
@@ -97,11 +97,13 @@ require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "tex
   console.timeEnd("inflate artists/genres")
 
   var render = function(ids) {
-      console.time("render")
+      console.time("render");
+      console.time("rendersongs")
       $("#songsbody")
           .empty()
           .append($.map(ids, function(id) {
               var row = $(document.createElement("tr"));
+              row.attr("id", id)
               var v = data.songs[id];
               row.append("<td><a href='http://research.culturalequity.org/rc-b2/get-audio-detailed-recording.do?recordingId=" + v.rid + "' target='_blank'>" + v.title + "</a></td>");
               row.append("<td>" + v.artists + "</td>");
@@ -110,16 +112,49 @@ require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "tex
               row.append("<td><a class='session-inline-link' href='#'>" + v.session + "</a></td>");
               return row;
           }));
+      console.timeEnd("rendersongs")
       $(".songlink").click(function(e) {
           e.preventDefault();
-          $(this).parent().parent().addClass("playing").siblings().removeClass("playing");
+          $(".playcontrol").addClass("glyphicon-pause");
+          $(".playcontrol").removeClass("glyphicon-play");
+          var row = $(this).parent().parent();
+          var song = data.songs[row.attr("id")];
+          $(".now-playing").text(data.artistmap[song.aids[0]] + " - " + song.title);
+          $(".now-playing").attr("href", "#" + row.attr("id"));
+          row.addClass("playing").siblings().removeClass("playing");
           player.load("https://crossorigin.me/" + $(this).attr("data-src"));
       });
-      $(".artist-inline-link").click(function(e) { render(artistmap[$(this).text()]); });
-      $(".genre-inline-link").click(function(e) { render(genremap[$(this).text()]); });
-      $(".session-inline-link").click(function(e) { render(sessionmap[$(this).text()]); });
+      $(".artist-inline-link").click(function(e) {
+          var aid = $(this).attr("aid");
+          history.pushState({"artist": aid}, "", "?artist=" + $(this).attr("aid"));
+          render(artistmap[$(this).text()]);
+          return false;
+      });
+      $(".genre-inline-link").click(function(e) {
+          var gid = $(this).attr("gid");
+          history.pushState({"genre": gid}, "", "?genre=" + gid);
+          render(genremap[$(this).text()]);
+          return false;
+      });
+      $(".session-inline-link").click(function(e) {
+          var session = encodeURIComponent($(this).text());
+          history.pushState({"session": session}, "", "?session=" + session);
+          render(sessionmap[$(this).text()]);
+          return false;
+      });
       console.timeEnd("render");
   }
+  $(".playcontrol").click(function(e) {
+      if ($(this).hasClass("glyphicon-play")) {
+          $(this).removeClass("glyphicon-play");
+          $(this).addClass("glyphicon-pause");
+          player.play();
+      } else {
+          $(this).removeClass("glyphicon-pause");
+          $(this).addClass("glyphicon-play");
+          player.pause();
+      }
+  });
   var debounce = function (fn) {
       var timeout;
       return function() {
@@ -136,5 +171,10 @@ require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "tex
       history.pushState({}, "", "#" + query);
       render(_.map(index.search(query), function (result) { return result.ref }));
   }));
+  window.onpopstate = function(event) {
+      if (_.has(event.state, "artist")) {
+          render(artistmap[data.artistmap[event.state["artist"]]]);
+      }
+  }
   //render(_.keys(data.songs))
 });

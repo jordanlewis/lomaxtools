@@ -1,5 +1,4 @@
 body { padding-top: 70px; }
-#nav-search-box { width: 500px; }
 
 .scrollable-menu {
     height: auto;
@@ -7,6 +6,49 @@ body { padding-top: 70px; }
     overflow-x: hidden;
 }
 
+.controlsbar {
+    top: 50px;
+}
+
 tr.playing {
     background-color: #98FB98;
+}
+
+tr {
+    padding-top:190px;
+    margin-top:-190px;
+}
+
+.songlink:target {
+    margin-top: -90px;
+    padding-top: 90px;
+    box-shadow: none;
+}
+
+.nowplaying {
+    text-overflow: ellipsis;
+}
+
+.controls {
+    height: 46px;
+    margin: 0 6px;
+    border: 0;
+    color: transparent;
+    overflow: visible;
+}
+
+.playbutton {
+    background: url(https://a-v2.sndcdn.com/assets/images/playback/pause-b172a6.svg) no-repeat center;
+}
+
+.paused {
+    background-image: url("https://a-v2.sndcdn.com/assets/images/playback/play-c9d2fb.svg");
+}
+
+.backbutton {
+    background: url(https://a-v2.sndcdn.com/assets/images/playback/prev-34697d.svg) no-repeat center;
+}
+
+.fwdbutton {
+    background: url(https://a-v2.sndcdn.com/assets/images/playback/skip-3aac31.svg) no-repeat center;
 }

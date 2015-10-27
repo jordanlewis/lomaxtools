@@ -14,12 +14,20 @@
         <div class="navbar-header">
           <span class="navbar-brand">Lomax Recordings Browser</span>
         </div>
-        <div class="navbar-form navbar-left" role="search">
-          <div class="form-group">
-            <input id="nav-search-box" type="search" class="form-control" placeholder="Search by title, artist, genre or session..."></input>
-          </div>
+        <div class="navbar-left btn-group">
+          <button class="btn navbar-btn glyphicon glyphicon-step-backward"></button>
+          <button class="btn navbar-btn playcontrol glyphicon glyphicon-play"></button>
+          <button class="btn navbar-btn glyphicon glyphicon-step-forward"></button>
+        </div>
+        <div class="navbar-left">
+            <a class="navbar-link navbar-text now-playing"></a>
+        </div>
+        <div class="navbar-form navbar-right" role="search">
         </div>
         <ul class="nav navbar-nav navbar-right">
+          <li class="form-group navbar-form">
+            <input id="nav-search-box" type="search" class="form-control" placeholder="Search"></input>
+          </li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Artists<span class="caret"></span></a>
             <ul id="artist-list" class="dropdown-menu scrollable-menu" role="menu">
@@ -37,8 +45,10 @@
           </li>
         </ul>
       </div>
-      <div id="wavesurfer"></div>
     </nav>
+        <div id="wavesurfer">
+          <span></span>
+        </div>
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-8">
