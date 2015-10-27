@@ -28,27 +28,3 @@ tr {
 .nowplaying {
     text-overflow: ellipsis;
 }
-
-.controls {
-    height: 46px;
-    margin: 0 6px;
-    border: 0;
-    color: transparent;
-    overflow: visible;
-}
-
-.playbutton {
-    background: url(https://a-v2.sndcdn.com/assets/images/playback/pause-b172a6.svg) no-repeat center;
-}
-
-.paused {
-    background-image: url("https://a-v2.sndcdn.com/assets/images/playback/play-c9d2fb.svg");
-}
-
-.backbutton {
-    background: url(https://a-v2.sndcdn.com/assets/images/playback/prev-34697d.svg) no-repeat center;
-}
-
-.fwdbutton {
-    background: url(https://a-v2.sndcdn.com/assets/images/playback/skip-3aac31.svg) no-repeat center;
-}
