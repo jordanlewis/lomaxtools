@@ -113,10 +113,34 @@ require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "tex
   */
   console.timeEnd("inflate artists/genres")
 
+  $("#songsbody").on("click", "a.songlink", function(e) {
+      var elem = $(this);
+      e.preventDefault();
+      $(".playcontrol").addClass("glyphicon-pause");
+      $(".playcontrol").removeClass("glyphicon-play");
+      var row = elem.parent().parent();
+      var song = data.songs[row.attr("id")];
+      $(".now-playing").text(data.artistmap[song.aids[0]] + " - " + song.title);
+      $(".now-playing").attr("href", "#" + row.attr("id"));
+      row.addClass("playing").siblings().removeClass("playing");
+      play(elem.attr("data-src"));
+  });
+
+  $("#songsbody").on("click", "a.artist-inline-link", function(e) {
+      return followLink(artistmap, "artist", $(this).attr("aid"), e);
+  });
+
+  $("#songsbody").on("click", "a.genre-inline-link", function(e) {
+      return followLink(genremap, "genre", $(this).attr("gid"), e);
+  });
+
+  $("#songsbody").on("click", "a.session-inline-link", function(e) {
+      return followLink(sessionmap, "session", $(this).attr("sid"), e);
+  });
+
   var render = function(ids) {
       console.log("rendering " + ids.length + " songs");
       console.time("render");
-      console.time("rendersongs")
       $("#songsbody")
           .empty()
           .append($.map(ids, function(id) {
@@ -130,28 +154,6 @@ require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "tex
                      "<td><a href='http://research.culturalequity.org/rc-b2/get-audio-detailed-recording.do?recordingId=" + v.rid + "' target='_blank'>" + v.tid + "</a></td>" +
                      "<td><a sid='" + sessionreversemap[v.session] + "' class='session-inline-link' href='#'>" + v.session + "</a></td>";
           }));
-      console.timeEnd("rendersongs")
-      var rows = $("#songsbody");
-      rows.find("a.songlink").click(function(e) {
-          e.preventDefault();
-          $(".playcontrol").addClass("glyphicon-pause");
-          $(".playcontrol").removeClass("glyphicon-play");
-          var row = $(this).parent().parent();
-          var song = data.songs[row.attr("id")];
-          $(".now-playing").text(data.artistmap[song.aids[0]] + " - " + song.title);
-          $(".now-playing").attr("href", "#" + row.attr("id"));
-          row.addClass("playing").siblings().removeClass("playing");
-          play($(this).attr("data-src"));
-      });
-      rows.find("a.artist-inline-link").click(function(e) {
-          return followLink(artistmap, "artist", $(this).attr("aid"), e);
-      });
-      rows.find("a.genre-inline-link").click(function(e) {
-          return followLink(genremap, "genre", $(this).attr("gid"), e);
-      });
-      rows.find("a.session-inline-link").click(function(e) {
-          return followLink(sessionmap, "session", $(this).attr("sid"), e);
-      });
       console.timeEnd("render");
   }
 
