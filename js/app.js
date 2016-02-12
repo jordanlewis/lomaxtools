@@ -35,14 +35,16 @@ require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "tex
     }
   });
   */
-  var player = WaveSurfer.create({container: "#wavesurfer", height: 46});
-  player.on("ready", function() { player.play(); });
-  player.on("finish", function() { 
+  var nextSong = function() {
       var next = $("#songsbody tr.playing").next();
       if (!next.length) next = $("#songsbody tr").first();
       next.addClass("playing").prev().removeClass("playing");
-      play($("a.songlink", next).attr("data-src"))
-  });
+      play($("a.songlink", next).attr("data-src"));
+  }
+
+  var player = WaveSurfer.create({container: "#wavesurfer", height: 46});
+  player.on("ready", function() { player.play() });
+  player.on("finish", nextSong);
   //var a = as[0];
   console.time("populate index")
   index = lunr.Index.load(JSON.parse(unparsed_index))
@@ -57,7 +59,6 @@ require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "tex
   }
   var followLink = function(indexmap, indexname, attr, clickevent) {
     clickevent.preventDefault();
-    console.log(indexname);
     var state = {}
     state[indexname] = attr;
     history.pushState(state, "", "?" + indexname + "=" + attr);
@@ -69,7 +70,7 @@ require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "tex
     _.each(_.sortBy(_.keys(indexmap), function(e) { return data[indexname + "map"][e]; }), function(elt, idx, list) {
         indexList.append("<li><a href='#' " + attrname + "='" + elt + "' class='" + indexname + "link'>" + data[indexname + "map"][elt] + "</a></li>");
     });
-    $("." + indexname + "link").click(function(e) {
+    indexList.on("click", "a." + indexname + "link", function(e) {
       followLink(indexmap, indexname, $(this).attr(attrname), e);
     });
   }
@@ -94,7 +95,7 @@ require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "tex
     addToMap(sessionmap, sid, v.rid);
     //index.add(v)
   });
-  createIndexMenu(sessionmap, "session", "session");
+  createIndexMenu(sessionmap, "session", "sid");
   createIndexMenu(artistmap, "artist", "aid");
   createIndexMenu(genremap, "genre", "gid");
 
@@ -184,6 +185,10 @@ require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "tex
           $(this).addClass("glyphicon-play");
           player.pause();
       }
+  });
+
+  $(".forwardcontrol").click(nextSong);
+  $(".backwardcontrol").click(function(e) {
   });
 
   var debounce = function (fn) {
