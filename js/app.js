@@ -36,10 +36,21 @@ require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "tex
   });
   */
   var nextSong = function() {
-      var next = $("#songsbody tr.playing").next();
+      var playing = $("#songsbody tr.playing");
+      var next = playing.next();
       if (!next.length) next = $("#songsbody tr").first();
-      next.addClass("playing").prev().removeClass("playing");
+      playing.removeClass("playing")
+      next.addClass("playing");
       play($("a.songlink", next).attr("data-src"));
+  }
+
+  var prevSong = function() {
+      var playing = $("#songsbody tr.playing");
+      var prev = playing.prev();
+      if (!prev.length) prev = $("#songsbody tr").last();
+      playing.removeClass("playing")
+      prev.addClass("playing");
+      play($("a.songlink", prev).attr("data-src"));
   }
 
   var player = WaveSurfer.create({container: "#wavesurfer", height: 46});
@@ -188,8 +199,7 @@ require(["jquery", "underscore", "audio.min", "wavesurfer.min", "lunr.min", "tex
   });
 
   $(".forwardcontrol").click(nextSong);
-  $(".backwardcontrol").click(function(e) {
-  });
+  $(".backwardcontrol").click(prevSong);
 
   var debounce = function (fn) {
       var timeout;
